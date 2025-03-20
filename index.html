@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlinkIt Marketing - Analyse Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 20px;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #0275d8;
+        }
+        .container {
+            max-width: 900px;
+            background: white;
+            padding: 20px;
+            margin: auto;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+        pre {
+            background-color: #282c34;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #0275d8;
+            color: white;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 BlinkIt Marketing - Analyse Data</h1>
+
+    <h2>📊 Taux de rétention client</h2>
+    <p>Le pourcentage de clients actifs sur une période qui passent au moins une commande sur la période suivante.</p>
+    <pre>
+WITH clients_juin AS (
+    SELECT DISTINCT customer_id
+    FROM blinkit-454014.Source.orders
+    WHERE DATE_TRUNC(DATE(order_date), MONTH) = DATE '2024-06-01'
+),
+clients_juillet AS (
+    SELECT DISTINCT customer_id
+    FROM blinkit-454014.Source.orders
+    WHERE DATE_TRUNC(DATE(order_date), MONTH) = DATE '2024-07-01'
+)
+SELECT 
+    COUNT(DISTINCT clients_juillet.customer_id) * 100.0 / COUNT(DISTINCT clients_juin.customer_id) AS retention_rate_pct
+FROM clients_juin
+LEFT JOIN clients_juillet 
+    ON clients_juin.customer_id = clients_juillet.customer_id;
+    </pre>
+
+    <h2>📌 Taux de conversion</h2>
+    <pre>
+SELECT
+    SUM(conversions)*100 / SUM(clicks) AS global_conversion_rate
+FROM `Source.marketing_performance`;
+    </pre>
+
+    <h2>📌 Revenus générés au total</h2>
+    <pre>
+SELECT
+    SUM(order_total) AS total_revenue
+FROM `Source.orders`;
+    </pre>
+
+    <h2>📌 ROAS (Return on Ad Spend)</h2>
+    <pre>
+SELECT
+    campaign_name,
+    ROUND(SUM (revenue_generated) / SUM(spend),2) AS roas
+FROM `Source.marketing_performance`
+GROUP BY campaign_name;
+    </pre>
+
+    <h2>📌 Taux de livraison à l'heure</h2>
+    <pre>
+SELECT
+    SUM(CASE WHEN delivery_status = 'On Time' THEN 1 ELSE 0 END)*100 / COUNT(*) AS pct_on_time
+FROM `Source.delivery_performance`;
+    </pre>
+
+    <h2>📌 Durée moyenne de livraison</h2>
+    <pre>
+SELECT
+    AVG(TIMESTAMP_DIFF(actual_delivery_time, order_date, MINUTE)) AS avg_delivery_time_minutes
+FROM `Source.orders`;
+    </pre>
+
+    <h2>📌 Nombre de clients générés par canal d'acquisition</h2>
+    <pre>
+SELECT 
+    channel, 
+    SUM(conversions) AS total_customers
+FROM `Source.marketing_performance`
+GROUP BY channel
+ORDER BY total_customers DESC;
+    </pre>
+
+    <h2>📌 Campagnes ayant attiré le plus de clients</h2>
+    <pre>
+SELECT 
+    campaign_name, 
+    SUM(conversions) AS total_customers_acquired
+FROM `Source.marketing_performance`
+GROUP BY campaign_name
+ORDER BY total_customers_acquired DESC;
+    </pre>
+
+    <h2>📌 Nombre d'impressions total</h2>
+    <pre>
+SELECT 
+    SUM(impressions) AS total_impressions
+FROM `Source.marketing_performance`;
+    </pre>
+
+    <div class="footer">
+        ⭐ N'oubliez pas de laisser un Star ⭐ sur le dépôt si ce projet vous plaît !  
+        <br>💡 Suggestions ? Ouvrez une <a href="https://github.com/votre-utilisateur/Blinkit_Data_Analysis/issues">Issue</a> !
+    </div>
+</div>
+
+</body>
+</html>
