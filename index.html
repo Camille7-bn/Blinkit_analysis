@@ -13,7 +13,7 @@
             padding: 20px;
         }
         h1, h2, h3 {
-            color: #0275d8;
+            color: #4CAF50;
         }
         .container {
             max-width: 900px;
@@ -24,24 +24,16 @@
         }
         pre {
             background-color: #282c34;
-            color: #ffffff;
+            color: #FFD700;
             padding: 10px;
             border-radius: 5px;
             overflow-x: auto;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #0275d8;
-            color: white;
+        .interpretation {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-left: 5px solid #4CAF50;
+            margin-top: 10px;
         }
         .footer {
             margin-top: 30px;
@@ -56,7 +48,6 @@
     <h1>🚀 BlinkIt Marketing - Analyse Data</h1>
 
     <h2>📊 Taux de rétention client</h2>
-    <p>Le pourcentage de clients actifs sur une période qui passent au moins une commande sur la période suivante.</p>
     <pre>
 WITH clients_juin AS (
     SELECT DISTINCT customer_id
@@ -74,6 +65,9 @@ FROM clients_juin
 LEFT JOIN clients_juillet 
     ON clients_juin.customer_id = clients_juillet.customer_id;
     </pre>
+    <div class="interpretation">
+        <strong>Interprétation :</strong> Le taux de rétention est de **9,36%**, ce qui signifie que seulement **9,36% des clients de juin ont commandé à nouveau en juillet**. Ce taux est relativement faible et suggère que BlinkIt a du mal à fidéliser ses clients.
+    </div>
 
     <h2>📌 Taux de conversion</h2>
     <pre>
@@ -81,6 +75,9 @@ SELECT
     SUM(conversions)*100 / SUM(clicks) AS global_conversion_rate
 FROM `Source.marketing_performance`;
     </pre>
+    <div class="interpretation">
+        <strong>Interprétation :</strong> Le taux de conversion est **10,02%**, ce qui signifie que sur 100 visiteurs, **10 deviennent réellement des clients**. C'est un bon indicateur d'efficacité marketing.
+    </div>
 
     <h2>📌 Revenus générés au total</h2>
     <pre>
@@ -88,6 +85,9 @@ SELECT
     SUM(order_total) AS total_revenue
 FROM `Source.orders`;
     </pre>
+    <div class="interpretation">
+        <strong>Interprétation :</strong> BlinkIt a généré **11 009 308 INR** de revenus bruts. Ce chiffre doit être mis en balance avec les coûts marketing et opérationnels pour évaluer la rentabilité.
+    </div>
 
     <h2>📌 ROAS (Return on Ad Spend)</h2>
     <pre>
@@ -97,6 +97,9 @@ SELECT
 FROM `Source.marketing_performance`
 GROUP BY campaign_name;
     </pre>
+    <div class="interpretation">
+        <strong>Interprétation :</strong> Un **ROAS supérieur à 1** signifie que la campagne est rentable. **"Referral Program" (ROAS = 2.03) est la plus rentable**, rapportant **2,03 INR pour chaque 1 INR investi**.
+    </div>
 
     <h2>📌 Taux de livraison à l'heure</h2>
     <pre>
@@ -104,6 +107,9 @@ SELECT
     SUM(CASE WHEN delivery_status = 'On Time' THEN 1 ELSE 0 END)*100 / COUNT(*) AS pct_on_time
 FROM `Source.delivery_performance`;
     </pre>
+    <div class="interpretation">
+        <strong>Interprétation :</strong> **69,4% des commandes sont livrées à l'heure**, ce qui montre une marge d'amélioration pour respecter la promesse de rapidité de BlinkIt.
+    </div>
 
     <h2>📌 Durée moyenne de livraison</h2>
     <pre>
@@ -111,39 +117,3 @@ SELECT
     AVG(TIMESTAMP_DIFF(actual_delivery_time, order_date, MINUTE)) AS avg_delivery_time_minutes
 FROM `Source.orders`;
     </pre>
-
-    <h2>📌 Nombre de clients générés par canal d'acquisition</h2>
-    <pre>
-SELECT 
-    channel, 
-    SUM(conversions) AS total_customers
-FROM `Source.marketing_performance`
-GROUP BY channel
-ORDER BY total_customers DESC;
-    </pre>
-
-    <h2>📌 Campagnes ayant attiré le plus de clients</h2>
-    <pre>
-SELECT 
-    campaign_name, 
-    SUM(conversions) AS total_customers_acquired
-FROM `Source.marketing_performance`
-GROUP BY campaign_name
-ORDER BY total_customers_acquired DESC;
-    </pre>
-
-    <h2>📌 Nombre d'impressions total</h2>
-    <pre>
-SELECT 
-    SUM(impressions) AS total_impressions
-FROM `Source.marketing_performance`;
-    </pre>
-
-    <div class="footer">
-        ⭐ N'oubliez pas de laisser un Star ⭐ sur le dépôt si ce projet vous plaît !  
-        <br>💡 Suggestions ? Ouvrez une <a href="https://github.com/votre-utilisateur/Blinkit_Data_Analysis/issues">Issue</a> !
-    </div>
-</div>
-
-</body>
-</html>
